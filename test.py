@@ -1,30 +1,41 @@
+import nodriver as uc
 import requests
-s = requests.session()
-s.get("https://discord.com/register")
+import asyncio
 
+
+async def main():
+    email="hirazoke@miho.uk"
+    username="aoshdaoisdou183198d"
+    global_name="tamatama"
+    password="1145148101919"
+    browser = await uc.start(headless=False)
+    tab = await browser.get("https://discord.com/register")
+    await tab.wait(5)
+    cookies = await browser.cookies.get_all(requests_cookie_format=True)
+    #session = requests.session()
+    #session.cookies.update(cookies)
+    #XFingerprint=(requests.get("https://discord.com/api/v9/experiments").json())["fingerprint"]
+    #print(XFingerprint)
+    JSON={
+      "fingerprint": XFingerprint,
+      "email": email,
+      "username": username,
+      "global_name": global_name,
+      "password": password,
+      "invite":"null",
+      "consent":"true",
+      "date_of_birth":"2000-1-01",
+      "gift_code_sku_id":"null",
+      "promotional_email_opt_in":"false"
+    }
 
 
 
 #XInstallationID=(requests.get("https://discord.com/api/v9/apex/experiments",params={"surface": "2"}).json())["installation"]
-XFingerprint=(requests.get("https://discord.com/api/v9/experiments").json())["fingerprint"]
-#print(XInstallationID)
-print(XFingerprint)
-email="hirazoke@miho.uk"
-username="aoshdaoisdou183198d"
-global_name="tamatama"
-password="259533kaoru"
-JSON={
-    "fingerprint": XFingerprint,
-    "email": email,
-    "username": username,
-    "global_name": global_name,
-    "password": password,
-    "invite":"null",
-    "consent":"true",
-    "date_of_birth":"2000-1-01",
-    "gift_code_sku_id":"null",
-    "promotional_email_opt_in":"false"
-}
+
+
+
+
 header={
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:157.0) Gecko/20100101 Firefox/157.0",
     "Accept": "*/*",
@@ -33,7 +44,6 @@ header={
     "Content-Type": "application/json",
     "X-Super-Properties": "",
     "X-Fingerprint": XFingerprint,
-    #"X-Installation-ID": {XInstallationID},
     "X-Discord-Locale": "ja",
     "X-Discord-Timezone": "Asia/Tokyo",
     "X-Debug-Options": "bugReporterEnabled",
@@ -42,7 +52,6 @@ header={
     "Alt-Used": "discord.com",
     "Connection": "keep-alive",
     "Referer": "https://discord.com/register",
-    "Cookie": "null",
     "Sec-Fetch-Dest": "empty",
     "Sec-Fetch-Mode": "cors",
     "Sec-Fetch-Site": "same-origin",
