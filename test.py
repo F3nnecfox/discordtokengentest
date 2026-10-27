@@ -12,6 +12,7 @@ async def main():
     browser = await uc.start(headless=False)
     tab = await browser.get("https://discord.com/register")
     await tab.wait(5)
+    print("hello")
     cookies = await browser.cookies.get_all()
     cf_clearance = next((c for c in cookies if c.name == "cf_clearance"), None)
     if cf_clearance:
