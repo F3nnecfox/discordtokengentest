@@ -1,7 +1,7 @@
 import nodriver as uc
 import requests
 import asyncio
-
+import json
 
 async def main():
     email="hirazoke@miho.uk"
@@ -24,20 +24,21 @@ async def main():
         await tab.evaluate(f"window.__password = {json.dumps(password)};")
         hcaptchaKeys = await tab.evaluate(
             """
-            const fingerprint = ((fetch("api/v9/experiments")).json()).fingerprint;
-            fetch("/api/v9/auth/register",
-                {
+            (async () => {
+            const fingerprint = (await (await fetch("api/v9/experiments")).json()).fingerprint;
+            return fetch("/api/v9/auth/register",
+                JSON.stringify({
                     "fingerprint": fingerprint,
                     "email": window.__email,
                     "username": window.__username,
                     "global_name": window.__globalname,
                     "password": window.__password,
-                    "invite":"null",
+                    "invite": null,
                     "consent":"true",
                     "date_of_birth":"2000-01-01",
-                    "gift_code_sku_id":"null",
-                    "promotional_email_opt_in":"false"
-                }).json();
+                    "gift_code_sku_id": null,
+                    "promotional_email_opt_in": false
+                })).json();})(）
             """,
             await_promise=True)
         print(hcaptchaKeys)
