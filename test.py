@@ -9,7 +9,7 @@ async def main():
     global_name="tamatama"
     password="1145148101919"
     
-    browser = await uc.start(headless=False)
+    browser = await uc.start(headless=True)
     tab = await browser.get("https://discord.com/register")
     await tab.wait(5)
     print("hello")
@@ -36,7 +36,8 @@ async def main():
             await_promise=True)
     else:
         print("NoCF")
-    
+if __name__ == '__main__':
+    uc.loop().run_until_complete(main())
 
 
 
