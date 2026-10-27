@@ -16,10 +16,11 @@ async def main():
     cookies = await browser.cookies.get_all()
     cf_clearance = next((c for c in cookies if c.name == "cf_clearance"), None)
     if cf_clearance:
+        print(cf_clearance)
         print("Pass!")
-        hcaptchKeys = await tab.evaluate(
+        hcaptchaKeys = await tab.evaluate(
             """
-            const hcapcha = (fetch("/api/v9/auth/register",
+            fetch("/api/v9/auth/register",
                 {
                     "fingerprint": ((fetch("api/v9/experiments")).json()).fingerprint,
                     "email": email,
@@ -31,9 +32,10 @@ async def main():
                     "date_of_birth":"2000-1-01",
                     "gift_code_sku_id":"null",
                     "promotional_email_opt_in":"false"
-                })).json();
+                }).json();
             """,
             await_promise=True)
+        print(hcaptureKeys)
     else:
         print("NoCF")
 if __name__ == '__main__':
