@@ -4,10 +4,10 @@ import asyncio
 import json
 
 async def main():
-    email="hirazoke@miho.uk"
-    username="aoshdaoisdou183198d"
+    email="ruzesuno@miho.uk"
+    username="aoshdaoisd"
     global_name="tamatama"
-    password="1145148101919"
+    password="1145148101919fennec"
     
     browser = await uc.start(headless=True)
     tab = await browser.get("https://discord.com/register")
