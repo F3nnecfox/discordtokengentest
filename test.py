@@ -9,7 +9,7 @@ async def main():
     global_name="tamatama"
     password="1145148101919fennec"
     
-    browser = await uc.start(headless=True)
+    browser = await uc.start(headless=False)
     tab = await browser.get("https://discord.com/register")
     await tab.wait(5)
     print("hello")
@@ -25,11 +25,11 @@ async def main():
         hcaptchaKeys = await tab.evaluate(
             """
             (async () => {
-            const fingerprint = (await (await fetch("api/v9/experiments")).json()).fingerprint;
-            return fetch("/api/v9/auth/register",{
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
+                const fingerprint = (await (await fetch("api/v9/experiments")).json()).fingerprint;
+                return fetch("/api/v9/auth/register",{
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
                     "fingerprint": fingerprint,
                     "email": window.__email,
                     "username": window.__username,
@@ -40,17 +40,21 @@ async def main():
                     "date_of_birth":"2000-01-01",
                     "gift_code_sku_id": null,
                     "promotional_email_opt_in": false
-                })).json();})()
+                    })
+                }).then(r => r.json());
+            })()
             """,
             await_promise=True)
         print(hcaptchaKeys)
+        hcaptchaKeys["captcha_sitekey"]
+        
     else:
         print("NoCF")
 if __name__ == '__main__':
     uc.loop().run_until_complete(main())
 
 
-
+#https://imgs3.hcaptcha.com/tip/c8eac061110af3f625027a073cb0ad66897e4ef2f239d4168882deebac508474/6d000d34d51c62af39fa62edeef178fd164cfbebe6738017d9fad38bca5f6094.jpeg
 #XInstallationID=(requests.get("https://discord.com/api/v9/apex/experiments",params={"surface": "2"}).json())["installation"]
 
 
