@@ -8,26 +8,21 @@ async def main():
     username="aoshdaoisdou183198d"
     global_name="tamatama"
     password="1145148101919"
+    
     browser = await uc.start(headless=False)
     tab = await browser.get("https://discord.com/register")
     await tab.wait(5)
-    cookies = await browser.cookies.get_all(requests_cookie_format=True)
-    #session = requests.session()
-    #session.cookies.update(cookies)
-    #XFingerprint=(requests.get("https://discord.com/api/v9/experiments").json())["fingerprint"]
-    #print(XFingerprint)
-    JSON={
-      "fingerprint": XFingerprint,
-      "email": email,
-      "username": username,
-      "global_name": global_name,
-      "password": password,
-      "invite":"null",
-      "consent":"true",
-      "date_of_birth":"2000-1-01",
-      "gift_code_sku_id":"null",
-      "promotional_email_opt_in":"false"
-    }
+    cookies = await browser.cookies.get_all()
+    cf_clearance = next((c for c in cookies if c.name == "cf_clearance"), None)
+    if cf_clearance:
+        print("Pass!")
+        hcaptchKeys = await tab.evaluate(
+            """
+            """,
+            await_promise=True)
+    else:
+        print("NoCF")
+    
 
 
 
@@ -36,30 +31,6 @@ async def main():
 
 
 
-header={
-    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:157.0) Gecko/20100101 Firefox/157.0",
-    "Accept": "*/*",
-    "Accept-Language": "ja,en-US;q=0.9,en;q=0.8",
-    "Accept-Encoding": "gzip, deflate, br, zstd",
-    "Content-Type": "application/json",
-    "X-Super-Properties": "",
-    "X-Fingerprint": XFingerprint,
-    "X-Discord-Locale": "ja",
-    "X-Discord-Timezone": "Asia/Tokyo",
-    "X-Debug-Options": "bugReporterEnabled",
-    "Content-Length": "283",
-    "Origin": "https://discord.com",
-    "Alt-Used": "discord.com",
-    "Connection": "keep-alive",
-    "Referer": "https://discord.com/register",
-    "Sec-Fetch-Dest": "empty",
-    "Sec-Fetch-Mode": "cors",
-    "Sec-Fetch-Site": "same-origin",
-    "Priority": "u=0",
-    "Pragma": "no-cache",
-    "Cache-Control": "no-cache"
-}
-#print(requests.get("https://discord.com/api/v9/auth/register",json=JSON,headers=header).text)
 
 #JSON
 #{"fingerprint":"1563584986076938403.icFG2-tV160uVqJ2yQqiOOpoIts","email":"kyarogya@miho.uk","username":"kyarogya1112","global_name":"kyarogya","password":"259533kaoru","invite":null,"consent":true,"date_of_birth":"2000-12-06","gift_code_sku_id":null,"promotional_email_opt_in":false}
