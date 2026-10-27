@@ -3,7 +3,7 @@
     username=""
     global_name=""
     password=""
-    const hcapcha = (await fetch("https://discord.com/api/v9/auth/register",
+    const hcapcha = (await fetch("/api/v9/auth/register",
                 {
                     "fingerprint": ((await fetch("api/v9/experiments")).json()).fingerprint,
                     "email": email,
