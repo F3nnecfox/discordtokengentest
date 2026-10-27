@@ -35,7 +35,7 @@ async def main():
                 }).json();
             """,
             await_promise=True)
-        print(hcaptureKeys)
+        print(hcaptchaKeys)
     else:
         print("NoCF")
 if __name__ == '__main__':
