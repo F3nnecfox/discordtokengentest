@@ -1,9 +1,22 @@
-import nodriver
+import asyncio
+import nodriver as uc
 
 async def main():
-    browser = await nodriver.start()
-    base_url = "https://quotes.toscrape.com"
-    page = await browser.get(base_url)
-    await page.close()
-if __name__ == '__main__':
-    nodriver.loop().run_until_complete(main())
+    browser = await uc.start(headless=True)
+
+    page = await browser.get("https://google.com")
+
+    await page.sleep(3)
+
+    cookies = await page.get_cookies()
+
+    if cookies:
+        print(f"Cookieあり: {len(cookies)}個")
+        for cookie in cookies:
+            print(f"{cookie.name} = {cookie.value}")
+    else:
+        print("Cookieなし")
+
+    browser.stop()
+
+asyncio.run(main())
