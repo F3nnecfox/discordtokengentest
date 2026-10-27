@@ -26,8 +26,10 @@ async def main():
             """
             (async () => {
             const fingerprint = (await (await fetch("api/v9/experiments")).json()).fingerprint;
-            return fetch("/api/v9/auth/register",
-                JSON.stringify({
+            return fetch("/api/v9/auth/register",register",{
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
                     "fingerprint": fingerprint,
                     "email": window.__email,
                     "username": window.__username,
@@ -38,7 +40,7 @@ async def main():
                     "date_of_birth":"2000-01-01",
                     "gift_code_sku_id": null,
                     "promotional_email_opt_in": false
-                })).json();})(）
+                })).json();})()
             """,
             await_promise=True)
         print(hcaptchaKeys)
