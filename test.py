@@ -18,18 +18,23 @@ async def main():
     if cf_clearance:
         print(cf_clearance)
         print("Pass!")
+        await tab.evaluate(f"window.__email = {json.dumps(email)};")
+        await tab.evaluate(f"window.__username = {json.dumps(username)};")
+        await tab.evaluate(f"window.__globalname = {json.dumps(global_name)};")
+        await tab.evaluate(f"window.__password = {json.dumps(password)};")
         hcaptchaKeys = await tab.evaluate(
             """
+            const fingerprint = ((fetch("api/v9/experiments")).json()).fingerprint;
             fetch("/api/v9/auth/register",
                 {
-                    "fingerprint": ((fetch("api/v9/experiments")).json()).fingerprint,
-                    "email": email,
-                    "username": username,
-                    "global_name": global_name,
-                    "password": password,
+                    "fingerprint": fingerprint,
+                    "email": window.__email,
+                    "username": window.__username,
+                    "global_name": window.__globalname,
+                    "password": window.__password,
                     "invite":"null",
                     "consent":"true",
-                    "date_of_birth":"2000-1-01",
+                    "date_of_birth":"2000-01-01",
                     "gift_code_sku_id":"null",
                     "promotional_email_opt_in":"false"
                 }).json();
