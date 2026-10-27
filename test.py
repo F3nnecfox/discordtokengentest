@@ -26,7 +26,7 @@ async def main():
             """
             (async () => {
             const fingerprint = (await (await fetch("api/v9/experiments")).json()).fingerprint;
-            return fetch("/api/v9/auth/register",register",{
+            return fetch("/api/v9/auth/register",{
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -36,7 +36,7 @@ async def main():
                     "global_name": window.__globalname,
                     "password": window.__password,
                     "invite": null,
-                    "consent":"true",
+                    "consent": true,
                     "date_of_birth":"2000-01-01",
                     "gift_code_sku_id": null,
                     "promotional_email_opt_in": false
