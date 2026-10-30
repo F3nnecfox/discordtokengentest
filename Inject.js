@@ -16,3 +16,4 @@
                     "gift_code_sku_id":"null",
                     "promotional_email_opt_in":"false"
                 })).json();
+https://api.hcaptcha.com/checksiteconfig?v=3b71cbe0d677f40e17dc54f11aed7a067d3e1066&host=discord.com&sitekey=a9b5fb07-92ff-493f-86fe-352a2803b3df&sc=1&swa=1&spst=0

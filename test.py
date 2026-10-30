@@ -8,7 +8,7 @@ async def main():
     username="aoshdaoisd"
     global_name="tamatama"
     password="1145148101919fennec"
-    
+
     browser = await uc.start(headless=False)
     tab = await browser.get("https://discord.com/register")
     await tab.wait(5)
@@ -46,8 +46,8 @@ async def main():
             """,
             await_promise=True)
         print(hcaptchaKeys)
-        hcaptchaKeys["captcha_sitekey"]
-        
+
+
     else:
         print("NoCF")
 if __name__ == '__main__':
