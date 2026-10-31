@@ -1,3 +1,12 @@
 <body>
     <script src="./hsw.js"></script>
+    <form>
+        <input type="file" id="bin">
+        <input type="button" id="load">
+    </form>
+    <script>
+        document.getElementByID("load").addEventlistener("click",function(){
+            var bin = document.getElementByID("bin").file;
+            console.log(hsw(0,bin));
+            });
 </body>
