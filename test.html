@@ -1,12 +1,54 @@
-<body>
-    <script src="./hsw.js"></script>
-    <form>
-        <input type="file" id="bin">
-        <input type="button" id="load">
-    </form>
-    <script>
-        document.getElementByID("load").addEventlistener("click",function(){
-            var bin = document.getElementByID("bin").file;
-            console.log(hsw(0,bin));
+<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8" />
+        <title>hCaptcha rqdata test</title>
+        <script
+            src="https://js.hcaptcha.com/1/api.js?render=explicit"
+            async
+            defer
+        ></script>
+    </head>
+    <body>
+        <input id="rqdata" type="text" placeholder="rqdata" size="60" />
+        <button id="run">チャレンジ表示</button>
+        <div id="captcha"></div>
+        <pre id="result"></pre>
+
+        <script>
+            const SITEKEY = "a9b5fb07-92ff-493f-86fe-352a2803b3df"; // hCaptchaの公式テスト用sitekey
+            let widgetId;
+
+            window.addEventListener("load", () => {
+                widgetId = hcaptcha.render("captcha", {
+                    sitekey: SITEKEY,
+                    size: "invisible",
+                });
             });
-</body>
+
+            document
+                .getElementById("run")
+                .addEventListener("click", async () => {
+                    const rqdata = document
+                        .getElementById("rqdata")
+                        .value.trim();
+                    try {
+                        const { response, key } = await hcaptcha.execute(
+                            widgetId,
+                            {
+                                async: true,
+                                rqdata: rqdata || undefined,
+                            },
+                        );
+                        document.getElementById("result").textContent =
+                            "token: " + response;
+                        // 本番ではこのtokenをサーバーに送り、siteverify APIで検証する
+                    } catch (e) {
+                        document.getElementById("result").textContent =
+                            "error: " + e;
+                    }
+                    hcaptcha.reset(widgetId);
+                });
+        </script>
+    </body>
+</html>

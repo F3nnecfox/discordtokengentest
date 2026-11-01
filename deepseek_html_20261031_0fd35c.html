@@ -1,0 +1,46 @@
+<body>
+<script src="./hsw.js"></script>
+<input type="file" id="bin" />
+<pre id="out"></pre>
+<script>
+document.getElementById("bin").addEventListener("change", async (e) => {
+  const bytes = new Uint8Array(await e.target.files[0].arrayBuffer());
+  const out = document.getElementById("out");
+
+  // --- MessagePack を最小限パースして ExtType(18) を探す ---
+  // 先頭は fixarray(0x92) など。ここでは ext8/ext16/ext32 を総当たりで探す。
+  const candidates = [["whole body", bytes]];
+
+  for (let i = 0; i < Math.min(bytes.length, 256); i++) {
+    const b = bytes[i];
+    let len = -1, hdr = 0;
+    if (b === 0xc7) { len = bytes[i+1]; hdr = 3; }            // ext8
+    else if (b === 0xc8) { len = (bytes[i+1]<<8)|bytes[i+2]; hdr = 4; } // ext16
+    else if (b === 0xc9) { len = ((bytes[i+1]<<24)|(bytes[i+2]<<16)|(bytes[i+3]<<8)|bytes[i+4])>>>0; hdr = 6; } // ext32
+    if (len < 0) continue;
+    const type = bytes[i + hdr - 1];
+    if (type !== 0x12) continue;            // ExtType code 18
+    const data = bytes.slice(i + hdr, i + hdr + len);
+    candidates.push([`ExtType(18)@${i}`, data]);
+  }
+
+  // --- 各候補を hsw(0, ...) に渡す ---
+  for (const [name, cand] of candidates) {
+    // 先頭に長さフィールド等がある場合に備えてオフセットも試す
+    for (let skip = 0; skip <= 8 && skip < cand.length; skip++) {
+      const slice = cand.slice(skip);
+      try {
+        const dec = await window.hsw(0, slice);
+        if (dec && dec.length > 0) {
+          out.textContent += `\n[+] HIT ${name} skip=${skip} (in=${slice.length}, out=${dec.length})\n`;
+          // UTF-8 で表示（JSONとは限らない）
+          out.textContent += new TextDecoder("utf-8", {fatal:false}).decode(dec.slice(0, 2000)) + "\n";
+          // hex も併記
+          out.textContent += "[hex] " + [...dec.slice(0,64)].map(x=>x.toString(16).padStart(2,"0")).join("") + "\n";
+        }
+      } catch (_) { /* InvalidTag 相当は無視 */ }
+    }
+  }
+});
+</script>
+</body>
