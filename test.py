@@ -2,6 +2,33 @@ import nodriver as uc
 import requests
 import asyncio
 import json
+import ast
+
+def build_html(sitekey: str, rqdata: str, invisible: bool) -> str:
+    return f"""<!doctype html>
+                <meta charset="utf-8">
+                <title>captcha</title>
+                <body style="margin:0;display:grid;place-items:center;min-height:100vh">
+                <div id="c"></div>
+                <script>
+                    window.__token = null;
+                    window.__err = null;
+                    function onLoad() {{
+                        const id = hcaptcha.render("c", {{
+                            sitekey: {json.dumps(sitekey)},
+                            size: {json.dumps("invisible" if invisible else "normal")},
+                            callback: (t) => {{ window.__token = t; }},
+                            "error-callback": (e) => {{ window.__err = String(e); }},
+                        }});
+                        if ({json.dumps(invisible)}) {{
+                            hcaptcha.execute(id, {{ async: false, rqdata: {json.dumps(rqdata)} }});
+}} else {{
+      hcaptcha.setData(id, {{ rqdata: {json.dumps(rqdata)} }});
+    }}
+  }}
+</script>
+<script src="https://js.hcaptcha.com/1/api.js?render=explicit&onload=onLoad" async defer></script>
+"""
 
 async def main():
     email="ruzesuno@miho.uk"
@@ -46,14 +73,33 @@ async def main():
             """,
             await_promise=True)
         print(hcaptchaKeys)
-
+        rqdata = ast.literal_eval(str(hcaptchaKeys))[5][1]["value"]
+        html = f"""
+        <!doctype html><meta charset="utf-8">
+        <div id="c"></div>
+        <script>
+          function onLoad() {{
+            const id = hcaptcha.render("c", {{
+              sitekey: "a9b5fb07-92ff-493f-86fe-352a2803b3df",
+              callback: (token) => console.log("token:", token),
+            }});
+            hcaptcha.setData(id, {{ rqdata: {json.dumps(rqdata)} }});
+          }}
+        </script>
+        <script src="https://js.hcaptcha.com/1/api.js?render=explicit&onload=onLoad" async defer></script>
+        """
+        body = f"document.head.innerHTML = {json.dumps("<p>HELL O</p>")};"
+        head = f"document.body.innerHTML = {json.dumps(html)};"
+        await tab.evaluate(head)
+        await tab.evaluate(body)
+        await asyncio.sleep(300)
 
     else:
         print("NoCF")
 if __name__ == '__main__':
     uc.loop().run_until_complete(main())
 
-
+#[['captcha_key', {'type': 'array', 'value': [{'type': 'string', 'value': 'captcha-required'}]}], ['captcha_sitekey', {'type': 'string', 'value': 'a9b5fb07-92ff-493f-86fe-352a2803b3df'}], ['captcha_service', {'type': 'string', 'value': 'hcaptcha'}], ['captcha_session_id', {'type': 'string', 'value': 'bdbb7b20-0872-4079-aa48-54fd3d46c7a3'}], ['should_serve_invisible', {'type': 'boolean', 'value': True}], ['captcha_rqdata', {'type': 'string', 'value': 'q6aWffdRJtzGCoaw1rpcsRXM/H0MMZPRlrJNFcunu6I2ai/FWUvQRQE1ySzTG88YUiLI8dFk8eBZGkf3tUAZZtDZs119uQ00GaWa1+6mk49fpz70ngGC14aeQkaZ+hKCEXjd+/GyIfaH6cTeeAn+Mvi+dG8d8DLuhjWCyZ+5Iig/G3aWBtbThPLB1vTGTC00HYXp2hIvvYslgnuVVwEHpxh6'}], ['captcha_rqtoken', {'type': 'string', 'value': 'ImNiN2tLYmpZdEg0M2x6ZHpKUHowcjMrTXpwMm1Cenp5My83VDRyd05rTGJLazlTcnF3NlMvbGZweFBFeFZtbzQycEdHN1E9PTJkd3ZhOGRBNTh3S2NGNloi.aubm6A.dY7sjqDAOcezmw2REi89AH5nOYA'}]]
 #https://imgs3.hcaptcha.com/tip/c8eac061110af3f625027a073cb0ad66897e4ef2f239d4168882deebac508474/6d000d34d51c62af39fa62edeef178fd164cfbebe6738017d9fad38bca5f6094.jpeg
 #XInstallationID=(requests.get("https://discord.com/api/v9/apex/experiments",params={"surface": "2"}).json())["installation"]
 
