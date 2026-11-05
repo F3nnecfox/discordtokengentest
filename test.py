@@ -45,53 +45,41 @@ async def main():
     if cf_clearance:
         print(cf_clearance)
         print("Pass!")
+        html = f"""<!doctype html><meta charset="utf-8"><div id="c"></div>"""
+        body = f"document.head.innerHTML = {json.dumps("<p>HELL O</p>")};"
+        head = f"document.body.innerHTML = {json.dumps(html)};"
+        await tab.evaluate(head)
+        await tab.evaluate(body)
+        await tab.evaluate(f"""
+            new Promise((resolve, reject) => {{
+              const s = document.createElement('script');
+              s.src = "https://js.hcaptcha.com/1/api.js?render=explicit";
+              s.onload = resolve;
+              s.onerror = () => reject(new Error('load failed'));
+              document.head.appendChild(s);
+            }})
+            """, await_promise=True)
+
         await tab.evaluate(f"window.__email = {json.dumps(email)};")
         await tab.evaluate(f"window.__username = {json.dumps(username)};")
         await tab.evaluate(f"window.__globalname = {json.dumps(global_name)};")
         await tab.evaluate(f"window.__password = {json.dumps(password)};")
         hcaptchaKeys = await tab.evaluate(
             """
-            (async () => {
-                const fingerprint = (await (await fetch("api/v9/experiments")).json()).fingerprint;
-                return fetch("/api/v9/auth/register",{
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                    "fingerprint": fingerprint,
-                    "email": window.__email,
-                    "username": window.__username,
-                    "global_name": window.__globalname,
-                    "password": window.__password,
-                    "invite": null,
-                    "consent": true,
-                    "date_of_birth":"2000-01-01",
-                    "gift_code_sku_id": null,
-                    "promotional_email_opt_in": false
-                    })
-                }).then(r => r.json());
-            })()
+            function cap(rqdata){
+            const id = hcaptcha.render("c", {
+                  sitekey: "a9b5fb07-92ff-493f-86fe-352a2803b3df",
+                  callback: (token) => console.log("token:", token),
+                });
+                hcaptcha.setData(id, { rqdata: rqdata });
+            }
+
+
             """,
             await_promise=True)
         print(hcaptchaKeys)
-        rqdata = ast.literal_eval(str(hcaptchaKeys))[5][1]["value"]
-        html = f"""
-        <!doctype html><meta charset="utf-8">
-        <div id="c"></div>
-        <script>
-          function onLoad() {{
-            const id = hcaptcha.render("c", {{
-              sitekey: "a9b5fb07-92ff-493f-86fe-352a2803b3df",
-              callback: (token) => console.log("token:", token),
-            }});
-            hcaptcha.setData(id, {{ rqdata: {json.dumps(rqdata)} }});
-          }}
-        </script>
-        <script src="https://js.hcaptcha.com/1/api.js?render=explicit&onload=onLoad" async defer></script>
-        """
-        body = f"document.head.innerHTML = {json.dumps("<p>HELL O</p>")};"
-        head = f"document.body.innerHTML = {json.dumps(html)};"
-        await tab.evaluate(head)
-        await tab.evaluate(body)
+        #rqdata = ast.literal_eval(str(hcaptchaKeys))[5][1]["value"]
+          #a9b5fb07-92ff-493f-86fe-352a2803b3df
         await asyncio.sleep(300)
 
     else:
